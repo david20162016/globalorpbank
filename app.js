@@ -226,10 +226,38 @@ class GOBEngine {
         const action = type === 'deposit' ? '입금' : '인출';
 
         const message = `${username} has ${action} ${amount} origami paper on ${month} ${date}`;
-        console.log(`%c[EMAIL to davidkim@bek.co.kr]: ${message}`, 'color: #10B981; font-weight: bold;');
-        this.notify('Notification sent to David Kim', 'success');
 
-        // Optional: Could integrate with EmailJS or similar here
+        // Log locally
+        console.log(`%c[NOTIFICATION: sending...]`, 'color: #F59E0B; font-weight: bold;');
+
+        // --- REAL EmailJS START ---
+        const serviceID = 'service_2m0je8c';
+        const templateID = 'template_default'; // Standard EmailJS default template ID
+        const publicKey = 'BInrMF80lzyvGARbK'; // Received from user
+
+        if (typeof emailjs !== 'undefined') {
+            emailjs.send(serviceID, templateID, {
+                from_name: 'GOB Banking System',
+                sender_email: 'doyulid@gmail.com',
+                to_email: 'davidkim@bek.co.kr',
+                message: message,
+                user_name: username,
+                action: action,
+                amount: amount,
+                date: `${month} ${date}`
+            }, publicKey).then(() => {
+                console.log("Email sent successfully!");
+                this.notify('Real email sent to David Kim', 'success');
+            }, (err) => {
+                console.error("Email failed:", err);
+                this.notify('Email delivery failed - check console', 'error');
+            });
+        } else {
+            console.log("EmailJS not ready. Logging message instead:");
+            console.log(`To: davidkim@bek.co.kr | Msg: ${message}`);
+            this.notify('Email simulated (Library missing)', 'warning');
+        }
+        // --- REAL EmailJS END ---
     }
 
     addHistory(user, label, amount, type) {
