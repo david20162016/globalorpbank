@@ -227,35 +227,42 @@ class GOBEngine {
 
         const message = `${username} has ${action} ${amount} origami paper on ${month} ${date}`;
 
-        // Log locally
         console.log(`%c[NOTIFICATION: sending...]`, 'color: #F59E0B; font-weight: bold;');
 
         // --- REAL EmailJS START ---
         const serviceID = 'service_2m0je8c';
-        const templateID = 'template_default'; // Standard EmailJS default template ID
-        const publicKey = 'BInrMF80lzyvGARbK'; // Received from user
+        const templateID = 'template_ynicopa';
 
         if (typeof emailjs !== 'undefined') {
-            emailjs.send(serviceID, templateID, {
-                from_name: 'GOB Banking System',
-                sender_email: 'doyulid@gmail.com',
-                to_email: 'davidkim@bek.co.kr',
+            // Using standard param names for EmailJS default template
+            const templateParams = {
+                from_name: username,
+                to_name: "David Kim",
                 message: message,
-                user_name: username,
                 action: action,
                 amount: amount,
-                date: `${month} ${date}`
-            }, publicKey).then(() => {
-                console.log("Email sent successfully!");
-                this.notify('Real email sent to David Kim', 'success');
+                date: `${month} ${date}`,
+                user_email: "davidkim@bek.co.kr",
+                sender_email: "doyulid@gmail.com"
+            };
+
+            emailjs.send(serviceID, templateID, templateParams).then(() => {
+                console.log("SUCCESS! Email sent to davidkim@bek.co.kr");
+                this.notify('Email Sent Successfully!', 'success');
             }, (err) => {
-                console.error("Email failed:", err);
-                this.notify('Email delivery failed - check console', 'error');
+                console.error("FAILED to send email:", err);
+                // Log the exact error to help user
+                if (err.status === 400) {
+                    this.notify('Error: Check your Template ID', 'error');
+                } else if (err.status === 401) {
+                    this.notify('Error: Check Public Key', 'error');
+                } else {
+                    this.notify('Email Delivery Failed', 'error');
+                }
             });
         } else {
-            console.log("EmailJS not ready. Logging message instead:");
-            console.log(`To: davidkim@bek.co.kr | Msg: ${message}`);
-            this.notify('Email simulated (Library missing)', 'warning');
+            console.warn("EmailJS Library is not loaded.");
+            this.notify('Email software not ready', 'warning');
         }
         // --- REAL EmailJS END ---
     }
