@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Origami Bank | GOB</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-decor">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+    </div>
+
+    <!-- Auth Container -->
+    <div id="auth-screen" class="auth-container">
+        <div class="card glass auth-card">
+            <div class="logo-area center">
+                <div class="logo-icon">折</div>
+                <h1 class="gob-title">GOB</h1>
+            </div>
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab-btn active" data-view="login">Login</button>
+                <button id="tab-signup" class="auth-tab-btn" data-view="signup">Sign Up</button>
+            </div>
+            <div id="login-view" class="auth-view active">
+                <div class="input-group">
+                    <input type="text" id="login-username" placeholder="Username">
+                    <input type="password" id="login-password" placeholder="Password">
+                    <button id="login-btn" class="primary-btn">Enter Bank</button>
+                </div>
+            </div>
+            <div id="signup-view" class="auth-view">
+                <div class="input-group">
+                    <input type="text" id="signup-username" placeholder="Choose Username">
+                    <input type="password" id="signup-password" placeholder="Set Password">
+                    <button id="signup-btn" class="primary-btn">Create Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <main id="app-screen" class="app-container hidden">
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo-icon">折</div>
+                <h1>GLOBAL ORIGAMI BANK</h1>
+            </div>
+            <div class="header-right">
+                <button id="staff-access-btn" class="staff-btn">STAFF PORTAL</button>
+                <div class="user-profile">
+                    <span id="display-username">User</span>
+                    <button id="logout-btn" class="icon-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="dashboard-grid">
+            <div class="card glass balance-card">
+                <h3>Current Balance</h3>
+                <div class="balance-display">
+                    <span id="balance-amount">0</span>
+                    <span class="unit">Sheets</span>
+                </div>
+                <div class="passive-stats">
+                    <div class="stat">
+                        <span class="label">Interest Rate</span>
+                        <span class="value">+2% / hr</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Rent (BOP)</span>
+                        <span class="value border-red">-1 / hr</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card glass action-card">
+                <h3>Quick Transactions</h3>
+                <div class="tab-group-main">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="deposit">입금 (Deposit)</button>
+                        <button class="tab-btn" data-tab="withdraw">인출 (Withdraw)</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="amount-input" placeholder="Whole sheets only..." min="1" step="1">
+                        <button id="submit-btn" class="primary-btn">Confirm Transaction</button>
+                    </div>
+                    <p class="helper-text">Only whole sheets are accepted/issued.</p>
+                </div>
+            </div>
+
+            <div class="card glass history-card full-width">
+                <div class="card-header">
+                    <h3>Transaction Ledger</h3>
+                    <button id="clear-history" class="text-btn">Clear History</button>
+                </div>
+                <div class="history-scroll">
+                    <table id="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Staff Portal Overlay -->
+    <div id="staff-overlay" class="overlay hidden">
+        <div class="card glass staff-card">
+            <div class="card-header">
+                <h2>STAFF CONTROL PANEL</h2>
+                <button id="close-staff" class="text-btn">Exit Portal</button>
+            </div>
+            <div id="staff-auth-view" class="center">
+                <div class="input-group" style="max-width: 300px; margin: 20px auto;">
+                    <p>Authentication Required</p>
+                    <input type="password" id="staff-password" placeholder="Enter Staff Password">
+                    <button id="staff-login-btn" class="primary-btn">Unlock</button>
+                </div>
+            </div>
+            <div id="staff-dashboard" class="hidden">
+                <div class="staff-dashboard-content">
+                    <div class="staff-left-panel">
+                        <div class="card-header">
+                            <h3>Global Activity Feed</h3>
+                        </div>
+                        <div class="activity-feed" id="staff-global-activity">
+                            <!-- Global activities go here -->
+                        </div>
+                    </div>
+
+                    <div id="staff-user-list-view" class="staff-right-panel">
+                        <div class="card-header">
+                            <h3>All Students</h3>
+                        </div>
+                        <div class="staff-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Balance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staff-user-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- User Detail View (Hidden by default) -->
+                    <div id="staff-user-detail-view" class="staff-right-panel hidden">
+                        <div class="card-header">
+                            <h3>User Details: <span id="detail-username-title">...</span></h3>
+                            <button id="back-to-list" class="text-btn">&larr; Back to List</button>
+                        </div>
+                        <div class="staff-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-user-history"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
