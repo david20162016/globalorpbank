@@ -106,6 +106,10 @@ class GOBEngine {
             document.getElementById('staff-user-detail-view').classList.add('hidden');
             document.getElementById('staff-user-list-view').classList.remove('hidden');
         });
+
+        document.getElementById('test-email-btn').addEventListener('click', () => {
+            this.sendEmailNotification('Test System', 'deposit', 999);
+        });
     }
 
     // --- Core Logic ---
@@ -227,42 +231,35 @@ class GOBEngine {
 
         const message = `${username} has ${action} ${amount} origami paper on ${month} ${date}`;
 
-        console.log(`%c[NOTIFICATION: sending...]`, 'color: #F59E0B; font-weight: bold;');
+        console.log(`%c[NOTIFICATION: Attempting to send...]`, 'color: #F59E0B; font-weight: bold;');
 
         // --- REAL EmailJS START ---
         const serviceID = 'service_2m0je8c';
         const templateID = 'template_ynicopa';
+        const publicKey = 'BInrMF80lzyvGARbK';
 
         if (typeof emailjs !== 'undefined') {
-            // Using standard param names for EmailJS default template
             const templateParams = {
                 from_name: username,
                 to_name: "David Kim",
                 message: message,
                 action: action,
                 amount: amount,
-                date: `${month} ${date}`,
-                user_email: "davidkim@bek.co.kr",
-                sender_email: "doyulid@gmail.com"
+                date: `${month} ${date}`
             };
 
-            emailjs.send(serviceID, templateID, templateParams).then(() => {
-                console.log("SUCCESS! Email sent to davidkim@bek.co.kr");
-                this.notify('Email Sent Successfully!', 'success');
-            }, (err) => {
-                console.error("FAILED to send email:", err);
-                // Log the exact error to help user
-                if (err.status === 400) {
-                    this.notify('Error: Check your Template ID', 'error');
-                } else if (err.status === 401) {
-                    this.notify('Error: Check Public Key', 'error');
-                } else {
-                    this.notify('Email Delivery Failed', 'error');
-                }
-            });
+            emailjs.send(serviceID, templateID, templateParams, publicKey)
+                .then((response) => {
+                    console.log("SUCCESS!", response.status, response.text);
+                    this.notify('Email Sent Successfully!', 'success');
+                }, (err) => {
+                    console.error("FAILED to send email:", err);
+                    const errorMsg = err.text || err.message || JSON.stringify(err);
+                    this.notify(`Email Error: ${errorMsg}`, 'error');
+                });
         } else {
-            console.warn("EmailJS Library is not loaded.");
-            this.notify('Email software not ready', 'warning');
+            console.error("EmailJS Library not found. Please check index.html script tag.");
+            this.notify('System Error: Email library missing', 'error');
         }
         // --- REAL EmailJS END ---
     }
