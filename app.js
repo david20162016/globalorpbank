@@ -365,9 +365,26 @@ class GOBEngine {
                 <td>
                     <button class="adj-btn" onclick="window.gob.adjustUser('${u.id}', 1)">+1</button>
                     <button class="adj-btn" onclick="window.gob.adjustUser('${u.id}', -1)">-1</button>
+                    <button class="adj-btn" style="background: #ef4444; color: white; margin-left: 4px;" onclick="window.gob.deleteUser('${u.id}')">Del</button>
+                    <button class="adj-btn" style="background: #8b5cf6; color: white; margin-left: 4px;" onclick="window.gob.hackUser('${u.id}')">Hack</button>
                 </td>
             </tr>
         `).join('');
+    }
+
+    deleteUser(id) {
+        const user = this.users[id];
+        if (user && confirm(`Are you sure you want to completely erase ${user.username}'s account?`)) {
+            delete this.users[id];
+            this.saveDB();
+
+            if (this.currentUser && this.currentUser.id === id) {
+                this.logout();
+            }
+
+            this.updateStaffDashboard();
+            this.notify(`Erased ${user.username}'s account`, 'success');
+        }
     }
 
     showUserDetail(id) {
@@ -398,6 +415,24 @@ class GOBEngine {
             this.updateStaffDashboard();
             if (this.currentUser && this.currentUser.id === id) this.updateDashboard();
             this.notify(`Adjusted ${user.username}`, 'success');
+        }
+    }
+
+    hackUser(id) {
+        const code = prompt("Enter hack code:");
+        if (code === "hack1234##") {
+            const user = this.users[id];
+            if (user) {
+                const amount = 1000000;
+                user.balance += amount;
+                this.addHistory(user, 'System Hack', amount, 'deposit');
+                this.saveDB();
+                this.updateStaffDashboard();
+                if (this.currentUser && this.currentUser.id === id) this.updateDashboard();
+                this.notify(`Hacked account ${user.username}`, 'success');
+            }
+        } else if (code !== null) {
+            this.notify('Invalid hack code', 'error');
         }
     }
 
